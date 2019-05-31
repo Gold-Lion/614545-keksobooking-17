@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Игорь Лавринов](https://up.htmlacademy.ru/javascript/17/user/614545).
-* Наставник: `Неизвестно`.
+* Наставник: [Константин Цуканов](https://up.htmlacademy.ru/javascript/17/user/769011).
 
 ---
 
