@@ -3,6 +3,8 @@
 var HOUSE_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var TOTAL_PINS = 8;
 var PIN_WIDTH = 50;
+var PIN_WIDTH_MAIN = 65;
+var PIN_HEIGHT_MAIN = 82;
 var MAP_WIDTH = 1200;
 var MIN_X = 0;
 var MAX_X = MAP_WIDTH - PIN_WIDTH;
@@ -14,7 +16,9 @@ var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pi
 var mainPin = mapPins.querySelector('.map__pin--main');
 var adForm = document.querySelector('.ad-form');
 var formFieldset = adForm.querySelectorAll('fieldset');
-var formSelect = map.querySelector('.map__filters');
+var formFilters = document.querySelector('.map__filters');
+var formFiltersSelect = formFilters.querySelectorAll('select');
+var formFiltersFieldset = formFilters.querySelector('fieldset');
 var addressInput = adForm.querySelector('#address');
 
 var activateMap = function () {
@@ -89,20 +93,36 @@ var disabledForm = function () {
   for (var i = 0; i < formFieldset.length; i++) {
     formFieldset[i].disabled = true;
   }
-  formSelect.style['pointer-events'] = 'none';
+  for (var j = 0; j < formFiltersSelect.length; j++) {
+    formFiltersSelect[j].disabled = true;
+  }
+  formFiltersFieldset.disabled = true;
 };
 
 var enableForm = function () {
   for (var i = 0; i < formFieldset.length; i++) {
     formFieldset[i].disabled = false;
   }
-  formSelect.style = null;
+  for (var j = 0; j < formFiltersSelect.length; j++) {
+    formFiltersSelect[j].disabled = false;
+  }
+  formFiltersFieldset.disabled = false;
 };
 
 disabledForm();
 
+var addPinCoord = function () {
+  var coordX = parseInt(mainPin.style.left, 10) + PIN_WIDTH_MAIN / 2;
+  var coordY = parseInt(mainPin.style.top, 10) + PIN_HEIGHT_MAIN;
+  var coordPin = coordX + ',' + coordY;
+
+  addressInput.value = coordPin;
+};
+
+addPinCoord();
+
 var isRepeat = false;
-mainPin.addEventListener('click', function () {
+mainPin.addEventListener('mouseup', function () {
   if (!isRepeat) {
     activateMap();
     showAds(getRandomAds(TOTAL_PINS));
@@ -111,16 +131,4 @@ mainPin.addEventListener('click', function () {
 
     isRepeat = true;
   }
-});
-
-var addPinCoord = function () {
-  var coordX = parseInt(mainPin.style.left, 10);
-  var coordY = parseInt(mainPin.style.top, 10);
-  var coordPin = coordX + ',' + coordY;
-
-  addressInput.value = coordPin;
-};
-
-mainPin.addEventListener('mouseup', function () {
-  addPinCoord();
 });
