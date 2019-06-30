@@ -114,7 +114,7 @@ disabledForm();
 var addPinCoord = function () {
   var coordX = parseInt(mainPin.style.left, 10) + PIN_WIDTH_MAIN / 2;
   var coordY = parseInt(mainPin.style.top, 10) + PIN_HEIGHT_MAIN;
-  var coordPin = coordX + ',' + coordY;
+  var coordPin = Math.round(coordX) + ',' + Math.round(coordY);
 
   addressInput.value = coordPin;
 };
@@ -123,12 +123,12 @@ addPinCoord();
 
 var isRepeat = false;
 mainPin.addEventListener('mouseup', function () {
-  if (!isRepeat) {
-    activateMap();
-    showAds(getRandomAds(TOTAL_PINS));
-    activateForm();
-    enableForm();
-
-    isRepeat = true;
+  if (isRepeat) {
+    return;
   }
+  activateMap();
+  showAds(getRandomAds(TOTAL_PINS));
+  activateForm();
+  enableForm();
+  isRepeat = true;
 });
