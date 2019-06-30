@@ -3,6 +3,8 @@
 var HOUSE_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var TOTAL_PINS = 8;
 var PIN_WIDTH = 50;
+var PIN_WIDTH_MAIN = 65;
+var PIN_HEIGHT_MAIN = 82;
 var MAP_WIDTH = 1200;
 var MIN_X = 0;
 var MAX_X = MAP_WIDTH - PIN_WIDTH;
@@ -11,9 +13,20 @@ var MAX_Y = 630;
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var mainPin = mapPins.querySelector('.map__pin--main');
+var adForm = document.querySelector('.ad-form');
+var formFieldset = adForm.querySelectorAll('fieldset');
+var formFilters = document.querySelector('.map__filters');
+var formFiltersSelect = formFilters.querySelectorAll('select');
+var formFiltersFieldset = formFilters.querySelector('fieldset');
+var addressInput = adForm.querySelector('#address');
 
 var activateMap = function () {
   map.classList.remove('map--faded');
+};
+
+var activateForm = function () {
+  adForm.classList.remove('ad-form--disabled');
 };
 
 var getAvatar = function (number) {
@@ -76,5 +89,46 @@ var showAds = function (ads) {
   mapPins.appendChild(fragment);
 };
 
-activateMap();
-showAds(getRandomAds(TOTAL_PINS));
+var disabledForm = function () {
+  for (var i = 0; i < formFieldset.length; i++) {
+    formFieldset[i].disabled = true;
+  }
+  for (var j = 0; j < formFiltersSelect.length; j++) {
+    formFiltersSelect[j].disabled = true;
+  }
+  formFiltersFieldset.disabled = true;
+};
+
+var enableForm = function () {
+  for (var i = 0; i < formFieldset.length; i++) {
+    formFieldset[i].disabled = false;
+  }
+  for (var j = 0; j < formFiltersSelect.length; j++) {
+    formFiltersSelect[j].disabled = false;
+  }
+  formFiltersFieldset.disabled = false;
+};
+
+disabledForm();
+
+var addPinCoord = function () {
+  var coordX = parseInt(mainPin.style.left, 10) + PIN_WIDTH_MAIN / 2;
+  var coordY = parseInt(mainPin.style.top, 10) + PIN_HEIGHT_MAIN;
+  var coordPin = Math.round(coordX) + ',' + Math.round(coordY);
+
+  addressInput.value = coordPin;
+};
+
+addPinCoord();
+
+var isRepeat = false;
+mainPin.addEventListener('mouseup', function () {
+  if (isRepeat) {
+    return;
+  }
+  activateMap();
+  showAds(getRandomAds(TOTAL_PINS));
+  activateForm();
+  enableForm();
+  isRepeat = true;
+});
