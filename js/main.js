@@ -1,11 +1,11 @@
 'use strict';
 
 var HOUSE_TYPES = ['palace', 'flat', 'house', 'bungalo'];
-var HOUSE_TYPES_PRICES = {
-  'palace': 10000,
-  'flat': 1000,
-  'house': 5000,
-  'bungalo': 0
+var HouseTypesPrices = {
+  PALACE: 10000,
+  FLAT: 1000,
+  HOUSE: 5000,
+  BUNGALO: 0
 };
 var TOTAL_PINS = 8;
 var PIN_WIDTH = 50;
@@ -141,12 +141,25 @@ mainPin.addEventListener('mouseup', function () {
 });
 
 var compareTypeAndPrice = function (typeHouse) {
-  priceInput.min = HOUSE_TYPES_PRICES[typeHouse];
-  priceInput.placeholder = HOUSE_TYPES_PRICES[typeHouse];
+  priceInput.min = HouseTypesPrices[typeHouse];
+  priceInput.placeholder = HouseTypesPrices[typeHouse];
 };
 
 typeInput.addEventListener('input', function (evt) {
-  compareTypeAndPrice(evt.target.value);
+  compareTypeAndPrice(evt.target.value.toUpperCase());
+});
+
+typeInput.addEventListener('change', function (evt) {
+  var value = evt.target.value;
+  if (value === 'palace') {
+    priceInput.setAttribute('min', 10000);
+  } else if (value === 'flat') {
+    priceInput.setAttribute('min', 1000);
+  } else if (value === 'house') {
+    priceInput.setAttribute('min', 5000);
+  } else if (value === 'bungalo') {
+    priceInput.setAttribute('min', 0);
+  }
 });
 
 var setInOutTime = function (time) {
