@@ -1,6 +1,12 @@
 'use strict';
 
 var HOUSE_TYPES = ['palace', 'flat', 'house', 'bungalo'];
+var HouseTypesPrices = {
+  PALACE: 10000,
+  FLAT: 1000,
+  HOUSE: 5000,
+  BUNGALO: 0
+};
 var TOTAL_PINS = 8;
 var PIN_WIDTH = 50;
 var PIN_WIDTH_MAIN = 65;
@@ -20,6 +26,11 @@ var formFilters = document.querySelector('.map__filters');
 var formFiltersSelect = formFilters.querySelectorAll('select');
 var formFiltersFieldset = formFilters.querySelector('fieldset');
 var addressInput = adForm.querySelector('#address');
+var priceInput = adForm.querySelector('#price');
+var typeInput = adForm.querySelector('#type');
+var timeInInput = adForm.querySelector('#timein');
+var timeOutInput = adForm.querySelector('#timeout');
+var isDisabled = true;
 
 var activateMap = function () {
   map.classList.remove('map--faded');
@@ -89,27 +100,19 @@ var showAds = function (ads) {
   mapPins.appendChild(fragment);
 };
 
-var disabledForm = function () {
-  for (var i = 0; i < formFieldset.length; i++) {
-    formFieldset[i].disabled = true;
+var disabledForm = function (elements, bool) {
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].disabled = bool;
   }
-  for (var j = 0; j < formFiltersSelect.length; j++) {
-    formFiltersSelect[j].disabled = true;
-  }
-  formFiltersFieldset.disabled = true;
 };
 
-var enableForm = function () {
-  for (var i = 0; i < formFieldset.length; i++) {
-    formFieldset[i].disabled = false;
-  }
-  for (var j = 0; j < formFiltersSelect.length; j++) {
-    formFiltersSelect[j].disabled = false;
-  }
-  formFiltersFieldset.disabled = false;
+var disabledElements = function (elements, bool) {
+  elements.disabled = bool;
 };
 
-disabledForm();
+disabledForm(formFieldset, isDisabled);
+disabledForm(formFiltersSelect, isDisabled);
+disabledElements(formFiltersFieldset, isDisabled);
 
 var addPinCoord = function () {
   var coordX = parseInt(mainPin.style.left, 10) + PIN_WIDTH_MAIN / 2;
@@ -123,12 +126,51 @@ addPinCoord();
 
 var isRepeat = false;
 mainPin.addEventListener('mouseup', function () {
+  isDisabled = false;
+
   if (isRepeat) {
     return;
   }
   activateMap();
   showAds(getRandomAds(TOTAL_PINS));
   activateForm();
-  enableForm();
+  disabledForm(formFieldset, isDisabled);
+  disabledForm(formFiltersSelect, isDisabled);
+  disabledElements(formFiltersFieldset, isDisabled);
   isRepeat = true;
+});
+
+var compareTypeAndPrice = function (typeHouse) {
+  priceInput.min = HouseTypesPrices[typeHouse];
+  priceInput.placeholder = HouseTypesPrices[typeHouse];
+};
+
+typeInput.addEventListener('input', function (evt) {
+  compareTypeAndPrice(evt.target.value.toUpperCase());
+});
+
+typeInput.addEventListener('change', function (evt) {
+  var value = evt.target.value;
+  if (value === 'palace') {
+    priceInput.setAttribute('min', 10000);
+  } else if (value === 'flat') {
+    priceInput.setAttribute('min', 1000);
+  } else if (value === 'house') {
+    priceInput.setAttribute('min', 5000);
+  } else if (value === 'bungalo') {
+    priceInput.setAttribute('min', 0);
+  }
+});
+
+var setInOutTime = function (time) {
+  timeInInput.value = time;
+  timeOutInput.value = time;
+};
+
+timeInInput.addEventListener('input', function (evt) {
+  setInOutTime(evt.target.value);
+});
+
+timeOutInput.addEventListener('input', function (evt) {
+  setInOutTime(evt.target.value);
 });
