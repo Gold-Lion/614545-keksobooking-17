@@ -112,8 +112,9 @@ var disableElements = function (elements, bool) {
 disableForm(formFieldset, isDisabled);
 disableForm(formFiltersSelect, isDisabled);
 disableElements(formFiltersFieldset, isDisabled);
+isDisabled = false;
 
-var addPinCoord = function (left, top) {
+var setPinCoord = function (left, top) {
   var coordX = parseInt(left, 10) + PIN_WIDTH / 2;
   var coordY = parseInt(top, 10) + PIN_HEIGHT_MAIN;
   var coordPin = Math.round(coordX) + ',' + Math.round(coordY);
@@ -121,18 +122,19 @@ var addPinCoord = function (left, top) {
   addressInput.value = coordPin;
 };
 
-addPinCoord(mainPin.style.left, mainPin.style.top);
+setPinCoord(mainPin.style.left, mainPin.style.top);
 
-var isRepeat = false;
-mainPin.addEventListener('mousedown', function (evt) {
-  evt.preventDefault();
+var activatePage = function () {
+  activateMap();
+  showAds(getRandomAds(TOTAL_PINS));
+  activateForm();
+  disableForm(formFieldset, isDisabled);
+  disableForm(formFiltersSelect, isDisabled);
+  disableElements(formFiltersFieldset, isDisabled);
+};
 
-  var startPinCoords = {
-    x: evt.clientX,
-    y: evt.clientY
-  };
-
-  var onMainPinMouseMove = function (moveEvt) {
+var getMainPinMouseMove = function (startPinCoords) {
+  return function (moveEvt) {
     moveEvt.preventDefault();
 
     var shift = {
@@ -162,27 +164,34 @@ mainPin.addEventListener('mousedown', function (evt) {
 
     mainPin.style.left = coordX + 'px';
     mainPin.style.top = coordY + 'px';
-    addPinCoord(coordX, coordY);
+    setPinCoord(coordX, coordY);
   };
+};
 
-  var onMainPinMouseUp = function (upEvt) {
+var getMainPinMouseUp = function (mouseMove, mouseUp) {
+  return function (upEvt) {
     upEvt.preventDefault();
-    document.removeEventListener('mousemove', onMainPinMouseMove);
-    document.removeEventListener('mouseup', onMainPinMouseUp);
+    document.removeEventListener('mousemove', mouseMove);
+    document.removeEventListener('mouseup', mouseUp);
 
-    if (isRepeat) {
-      return;
+    if (!isRepeat) {
+      activatePage();
+      isRepeat = true;
     }
-    activateMap();
-    showAds(getRandomAds(TOTAL_PINS));
-    activateForm();
-    disableForm(formFieldset, isDisabled);
-    disableForm(formFiltersSelect, isDisabled);
-    disableElements(formFiltersFieldset, isDisabled);
-    isRepeat = true;
+  };
+};
+
+var isRepeat = false;
+mainPin.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var startPinCoords = {
+    x: evt.clientX,
+    y: evt.clientY
   };
 
-  isDisabled = false;
+  var onMainPinMouseMove = getMainPinMouseMove(startPinCoords);
+  var onMainPinMouseUp = getMainPinMouseUp(onMainPinMouseMove, onMainPinMouseUp);
 
   document.addEventListener('mousemove', onMainPinMouseMove);
   document.addEventListener('mouseup', onMainPinMouseUp);
