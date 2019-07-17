@@ -150,15 +150,15 @@ var getMainPinMouseMove = function (startPinCoords) {
     var coordX = mainPin.offsetLeft - shift.x;
     var coordY = mainPin.offsetTop - shift.y;
 
-    if (coordX > MAX_X) {
+    if (coordX >= MAX_X) {
       coordX = MAX_X;
-    } else if (coordX < MIN_X) {
+    } else if (coordX <= MIN_X) {
       coordX = MIN_X;
     }
 
-    if (coordY > MAX_Y) {
+    if (coordY >= MAX_Y) {
       coordY = MAX_Y;
-    } else if (coordY < MIN_Y) {
+    } else if (coordY <= MIN_Y) {
       coordY = MIN_Y;
     }
 
