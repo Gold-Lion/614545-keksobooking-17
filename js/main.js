@@ -8,8 +8,7 @@ var HouseTypesPrices = {
   BUNGALO: 0
 };
 var TOTAL_PINS = 8;
-var PIN_WIDTH = 50;
-var PIN_WIDTH_MAIN = 65;
+var PIN_WIDTH = 64;
 var PIN_HEIGHT_MAIN = 82;
 var MAP_WIDTH = 1200;
 var MIN_X = 0;
@@ -100,44 +99,102 @@ var showAds = function (ads) {
   mapPins.appendChild(fragment);
 };
 
-var disabledForm = function (elements, bool) {
+var disableForm = function (elements, bool) {
   for (var i = 0; i < elements.length; i++) {
     elements[i].disabled = bool;
   }
 };
 
-var disabledElements = function (elements, bool) {
+var disableElements = function (elements, bool) {
   elements.disabled = bool;
 };
 
-disabledForm(formFieldset, isDisabled);
-disabledForm(formFiltersSelect, isDisabled);
-disabledElements(formFiltersFieldset, isDisabled);
+disableForm(formFieldset, isDisabled);
+disableForm(formFiltersSelect, isDisabled);
+disableElements(formFiltersFieldset, isDisabled);
+isDisabled = false;
 
-var addPinCoord = function () {
-  var coordX = parseInt(mainPin.style.left, 10) + PIN_WIDTH_MAIN / 2;
-  var coordY = parseInt(mainPin.style.top, 10) + PIN_HEIGHT_MAIN;
+var setPinCoord = function (left, top) {
+  var coordX = parseInt(left, 10) + PIN_WIDTH / 2;
+  var coordY = parseInt(top, 10) + PIN_HEIGHT_MAIN;
   var coordPin = Math.round(coordX) + ',' + Math.round(coordY);
 
   addressInput.value = coordPin;
 };
 
-addPinCoord();
+setPinCoord(mainPin.style.left, mainPin.style.top);
 
-var isRepeat = false;
-mainPin.addEventListener('mouseup', function () {
-  isDisabled = false;
-
-  if (isRepeat) {
-    return;
-  }
+var activatePage = function () {
   activateMap();
   showAds(getRandomAds(TOTAL_PINS));
   activateForm();
-  disabledForm(formFieldset, isDisabled);
-  disabledForm(formFiltersSelect, isDisabled);
-  disabledElements(formFiltersFieldset, isDisabled);
-  isRepeat = true;
+  disableForm(formFieldset, isDisabled);
+  disableForm(formFiltersSelect, isDisabled);
+  disableElements(formFiltersFieldset, isDisabled);
+};
+
+var getMainPinMouseMove = function (startPinCoords) {
+  return function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: startPinCoords.x - moveEvt.clientX,
+      y: startPinCoords.y - moveEvt.clientY
+    };
+
+    startPinCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    var coordX = mainPin.offsetLeft - shift.x;
+    var coordY = mainPin.offsetTop - shift.y;
+
+    if (coordX >= MAX_X) {
+      coordX = MAX_X;
+    } else if (coordX <= MIN_X) {
+      coordX = MIN_X;
+    }
+
+    if (coordY >= MAX_Y) {
+      coordY = MAX_Y;
+    } else if (coordY <= MIN_Y) {
+      coordY = MIN_Y;
+    }
+
+    mainPin.style.left = coordX + 'px';
+    mainPin.style.top = coordY + 'px';
+    setPinCoord(coordX, coordY);
+  };
+};
+
+var getMainPinMouseUp = function (mouseMove, mouseUp) {
+  return function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', mouseMove);
+    document.removeEventListener('mouseup', mouseUp);
+
+    if (!isRepeat) {
+      activatePage();
+      isRepeat = true;
+    }
+  };
+};
+
+var isRepeat = false;
+mainPin.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var startPinCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  var onMainPinMouseMove = getMainPinMouseMove(startPinCoords);
+  var onMainPinMouseUp = getMainPinMouseUp(onMainPinMouseMove, onMainPinMouseUp);
+
+  document.addEventListener('mousemove', onMainPinMouseMove);
+  document.addEventListener('mouseup', onMainPinMouseUp);
 });
 
 var compareTypeAndPrice = function (typeHouse) {
