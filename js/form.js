@@ -7,6 +7,12 @@
     HOUSE: 5000,
     BUNGALO: 0
   };
+  var minPriceMap = {
+    palace: 10000,
+    flat: 1000,
+    house: 5000,
+    bungalo: 0
+  };
   var PIN_WIDTH = 64;
   var PIN_HEIGHT_MAIN = 82;
   var map = document.querySelector('.map');
@@ -39,15 +45,17 @@
   });
 
   typeInput.addEventListener('change', function (evt) {
+    var min = minPriceMap[value];
+
     var value = evt.target.value;
     if (value === 'palace') {
-      priceInput.setAttribute('min', 10000);
+      priceInput.min = min[value];
     } else if (value === 'flat') {
-      priceInput.setAttribute('min', 1000);
+      priceInput.min = min[value];
     } else if (value === 'house') {
-      priceInput.setAttribute('min', 5000);
+      priceInput.min = min[value];
     } else if (value === 'bungalo') {
-      priceInput.setAttribute('min', 0);
+      priceInput.min = min[value];
     }
   });
 
