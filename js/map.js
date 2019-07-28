@@ -1,11 +1,10 @@
 'use strict';
 
 (function () {
-  var TOTAL_PINS = 8;
-  var PIN_WIDTH = 64;
+  var PIN_WIDTH_MAIN = 65;
   var MAP_WIDTH = 1200;
   var MIN_X = 0;
-  var MAX_X = MAP_WIDTH - PIN_WIDTH;
+  var MAX_X = MAP_WIDTH - PIN_WIDTH_MAIN;
   var MIN_Y = 130;
   var MAX_Y = 630;
   var map = document.querySelector('.map');
@@ -43,7 +42,7 @@
 
   var activatePage = function () {
     activateMap();
-    window.showAds(window.getRandomAds(TOTAL_PINS));
+    window.showAds();
     activateForm();
     disableForm(formFieldset, isDisabled);
     disableForm(formFiltersSelect, isDisabled);

@@ -3,7 +3,7 @@
 (function () {
   var HOUSE_TYPES = ['palace', 'flat', 'house', 'bungalo'];
   var TOTAL_PINS = 8;
-  var PIN_WIDTH = 64;
+  var PIN_WIDTH = 65;
   var MAP_WIDTH = 1200;
   var MIN_X = 0;
   var MAX_X = MAP_WIDTH - PIN_WIDTH;

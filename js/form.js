@@ -13,8 +13,8 @@
     house: 5000,
     bungalo: 0
   };
-  var PIN_WIDTH = 64;
-  var PIN_HEIGHT_MAIN = 82;
+  var PIN_WIDTH_MAIN = 65;
+  var PIN_HEIGHT_MAIN = 87;
   var map = document.querySelector('.map');
   var mapPins = map.querySelector('.map__pins');
   var mainPin = mapPins.querySelector('.map__pin--main');
@@ -26,9 +26,9 @@
   var timeOutInput = adForm.querySelector('#timeout');
 
   window.setPinCoord = function (left, top) {
-    var coordX = parseInt(left, 10) + PIN_WIDTH / 2;
+    var coordX = parseInt(left, 10) + PIN_WIDTH_MAIN / 2;
     var coordY = parseInt(top, 10) + PIN_HEIGHT_MAIN;
-    var coordPin = Math.round(coordX) + ',' + Math.round(coordY);
+    var coordPin = Math.round(coordX) + ', ' + Math.round(coordY);
 
     addressInput.value = coordPin;
   };
@@ -70,5 +70,18 @@
 
   timeOutInput.addEventListener('input', function (evt) {
     setInOutTime(evt.target.value);
+  });
+
+  var successHandler = function () {
+    window.result.showSuccess();
+  };
+
+  var errorHandler = function () {
+    window.result.showError();
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.server.upload(new FormData(adForm), successHandler, errorHandler);
   });
 })();
