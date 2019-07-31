@@ -16,7 +16,8 @@
         var pinElement = pinTemplate.cloneNode(true);
         var ad = ads[i];
 
-        pinElement.style = 'left: ' + (ad.location.x - PIN_WIDTH / 2) + 'px; top: ' + (ad.location.y - PIN_HEIGHT_MAIN) + 'px;';
+        pinElement.style.left = (ad.location.x - PIN_WIDTH / 2) + 'px';
+        pinElement.style.top = (ad.location.y - PIN_HEIGHT_MAIN) + 'px';
         pinElement.querySelector('img').src = ad.author.avatar;
         pinElement.querySelector('img').alt = titleAds.placeholder;
         fragment.appendChild(pinElement);
